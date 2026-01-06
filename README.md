@@ -26,7 +26,9 @@ pip install -r requirements.txt
 This repository includes a GitHub Action that automatically downloads flag images. The workflow:
 - Runs monthly on the 1st of each month
 - Can be triggered manually from the Actions tab
-- Saves downloaded images as workflow artifacts (available for 90 days)
+- Resizes images to a maximum of 600px width/height while maintaining aspect ratio
+- Commits the downloaded and resized images directly to the repository
+- Also saves images as workflow artifacts (available for 90 days)
 
 To manually trigger the workflow:
 1. Go to the "Actions" tab in the GitHub repository
@@ -45,14 +47,18 @@ The script will:
 1. Fetch the list of national flags from Wikipedia
 2. Extract flag image URLs
 3. Download all flag images to the `flags/` directory
-4. Display a summary of successful and failed downloads
+4. Resize images to a maximum of 600px width/height while maintaining aspect ratio
+5. Display a summary of successful and failed downloads
 
 ### Output
 
-All downloaded flag images will be saved in the `flags/` directory. Each image is prefixed with a number to maintain order and avoid filename conflicts.
+All downloaded flag images will be saved in the `flags/` directory. Each image is:
+- Prefixed with a number to maintain order and avoid filename conflicts
+- Resized to fit within 600px width/height while maintaining aspect ratio
+- Saved in PNG format for quality and compatibility
 
 ### Notes
 
 - The script includes a delay between requests to be respectful to Wikipedia's servers
 - Already downloaded images will be skipped on subsequent runs
-- The `flags/` directory is excluded from version control (see `.gitignore`)
+- Images are automatically resized to optimize storage while maintaining quality

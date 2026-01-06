@@ -11,7 +11,7 @@ jobs:
   download-flags:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
     
     steps:
       - name: Checkout repository
@@ -31,6 +31,18 @@ jobs:
       - name: Download flag images
         run: |
           python download_flags.py
+      
+      - name: Commit and push flag images
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add flags/
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update flag images (resized to max 600px)"
+            git push
+          fi
       
       - name: Upload flag images as artifacts
         uses: actions/upload-artifact@v4

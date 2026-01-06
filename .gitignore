@@ -1,6 +1,3 @@
-# Downloaded flag images
-flags/
-
 # Python
 __pycache__/
 *.py[cod]

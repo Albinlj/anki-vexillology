@@ -18,6 +18,8 @@ WIKIPEDIA_URL = "https://en.wikipedia.org/wiki/List_of_national_flags_of_soverei
 FLAGS_DIR = "flags"
 OUTPUT_FILE = "National_Flags.apkg"
 REQUEST_DELAY = 0.5  # Delay between requests to be respectful to Wikipedia's servers
+MAX_DESCRIPTION_PARAGRAPHS = 2  # Maximum number of paragraphs to include in description
+MAX_DESCRIPTION_LENGTH = 500  # Maximum length of description in characters
 
 
 def get_wikipedia_page():
@@ -139,16 +141,16 @@ def get_flag_details(country_name):
                     if len(' '.join(description_parts)) > 300:  # Get enough context
                         break
         
-        description = ' '.join(description_parts[:2]) if description_parts else None
+        description = ' '.join(description_parts[:MAX_DESCRIPTION_PARAGRAPHS]) if description_parts else None
         
         # Truncate description if too long
-        if description and len(description) > 500:
+        if description and len(description) > MAX_DESCRIPTION_LENGTH:
             # Try to cut at sentence boundary
-            sentences = description[:500].split('. ')
+            sentences = description[:MAX_DESCRIPTION_LENGTH].split('. ')
             if len(sentences) > 1:
                 description = '. '.join(sentences[:-1]) + '.'
             else:
-                description = description[:500] + '...'
+                description = description[:MAX_DESCRIPTION_LENGTH] + '...'
         
         return {
             'adoption_date': adoption_date,

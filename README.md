@@ -2,7 +2,20 @@
 
 An Anki flashcard deck for learning national flags (vexillology).
 
-## Prerequisites
+## Download Pre-built Deck
+
+The easiest way to get started is to download a pre-built deck from the [Releases page](../../releases). The deck is automatically generated monthly with the latest flag information from Wikipedia.
+
+1. Go to the [Releases page](../../releases)
+2. Download the latest `National_Flags.apkg` file
+3. Import it into Anki (File > Import)
+4. Start learning!
+
+## Building the Deck Yourself
+
+If you want to build the deck yourself or customize it, follow the instructions below.
+
+### Prerequisites
 
 - Python 3.6 or higher
 - pip (Python package manager)
@@ -74,3 +87,21 @@ python test_anki_deck.py   # Test Anki deck creation functionality
 - The `flags/` directory is excluded from version control (see `.gitignore`)
 - Flag descriptions and details are automatically scraped from Wikipedia flag pages
 - Some countries may not have detailed information available on Wikipedia
+
+## Automated Releases
+
+This repository includes a GitHub Action that automatically:
+1. Downloads all flag images from Wikipedia
+2. Creates the Anki deck with the latest information
+3. Publishes a new release with the `National_Flags.apkg` file
+
+The workflow runs:
+- **Monthly** on the 1st of each month at 00:00 UTC (to keep the deck updated with latest Wikipedia information)
+- **Manually** via the "Actions" tab → "Create Anki Deck Release" → "Run workflow"
+- **Automatically** when a new version tag is pushed (e.g., `v1.0.0`)
+
+To trigger a manual release, you can also push a tag:
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```

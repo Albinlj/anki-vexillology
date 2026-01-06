@@ -21,6 +21,21 @@ pip install -r requirements.txt
 
 ### Usage
 
+#### Using GitHub Actions (Automated)
+
+This repository includes a GitHub Action that automatically downloads flag images. The workflow:
+- Runs monthly on the 1st of each month
+- Can be triggered manually from the Actions tab
+- Runs on push to the main branch
+- Saves downloaded images as workflow artifacts (available for 90 days)
+
+To manually trigger the workflow:
+1. Go to the "Actions" tab in the GitHub repository
+2. Select "Download Flag Images" workflow
+3. Click "Run workflow"
+
+#### Using the Script Directly
+
 Run the download script:
 
 ```bash

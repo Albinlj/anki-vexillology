@@ -36,10 +36,10 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add flags/
-          if [ -z "$(git status --porcelain)" ]; then
+          if [ -z "$(git status --porcelain flags/)" ]; then
             echo "No changes to commit"
           else
+            git add flags/
             git commit -m "Update flag images (resized to max 600px)"
             git push
           fi

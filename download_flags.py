@@ -99,8 +99,9 @@ def resize_image(image_data, max_size=MAX_IMAGE_SIZE):
             # Create a white background
             background = Image.new('RGB', img.size, (255, 255, 255))
             # Use alpha channel as mask if available
-            if len(img.split()) == 4:
-                background.paste(img, mask=img.split()[3])
+            channels = img.split()
+            if len(channels) == 4:
+                background.paste(img, mask=channels[3])
             else:
                 background.paste(img)
             img = background

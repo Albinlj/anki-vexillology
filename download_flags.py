@@ -96,14 +96,9 @@ def resize_image(image_data, max_size=MAX_IMAGE_SIZE):
         
         # Convert RGBA to RGB if necessary (PNG format supports RGB)
         if img.mode == 'RGBA':
-            # Create a white background
+            # Create a white background and paste with alpha mask
             background = Image.new('RGB', img.size, (255, 255, 255))
-            # Use alpha channel as mask if available
-            channels = img.split()
-            if len(channels) == 4:
-                background.paste(img, mask=channels[3])
-            else:
-                background.paste(img)
+            background.paste(img, mask=img.split()[3])
             img = background
         elif img.mode not in ('RGB', 'L'):
             img = img.convert('RGB')

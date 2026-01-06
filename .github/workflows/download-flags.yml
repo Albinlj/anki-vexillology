@@ -36,12 +36,15 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          if [ -z "$(git status --porcelain flags/)" ]; then
-            echo "No changes to commit"
-          else
+          # Check if flags directory has changes (new, modified, or deleted files)
+          if [ -d "flags" ] && [ -n "$(git status --porcelain flags/)" ]; then
             git add flags/
             git commit -m "Update flag images (resized to max 600px)"
             git push
+          elif [ ! -d "flags" ]; then
+            echo "No flags directory found"
+          else
+            echo "No changes to commit"
           fi
       
       - name: Upload flag images as artifacts

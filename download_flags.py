@@ -65,8 +65,9 @@ def extract_flag_images(html_content):
                                 'width': width
                             })
                     except (ValueError, TypeError):
-                        # If width is not a number, check if src contains 'Flag'
-                        if 'Flag' in img_url or 'flag' in alt_text.lower():
+                        # If width is not a number, check if it's a flag image
+                        # Be more restrictive: require 'Flag_of_' in URL or 'flag of' in alt text
+                        if 'Flag_of_' in img_url or 'flag of' in alt_text.lower():
                             flag_images.append({
                                 'url': img_url,
                                 'alt': alt_text,

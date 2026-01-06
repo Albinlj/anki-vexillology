@@ -1,6 +1,9 @@
 # Downloaded flag images
 flags/
 
+# Generated Anki deck
+*.apkg
+
 # Python
 __pycache__/
 *.py[cod]

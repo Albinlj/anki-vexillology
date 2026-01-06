@@ -46,9 +46,17 @@ jobs:
         run: |
           echo "## Download Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Total flag images downloaded: $(ls -1 flags/ | wc -l)" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Files:" >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
-          ls -lh flags/ | head -20 >> $GITHUB_STEP_SUMMARY
-          echo '```' >> $GITHUB_STEP_SUMMARY
+          if [ -d "flags" ] && [ "$(ls -A flags/)" ]; then
+            FILE_COUNT=$(ls -1 flags/ | wc -l)
+            echo "Total flag images downloaded: $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Sample of Downloaded Files:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            ls -lh flags/ | head -20 >> $GITHUB_STEP_SUMMARY
+            if [ "$FILE_COUNT" -gt 20 ]; then
+              echo "... and $((FILE_COUNT - 20)) more files" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No flag images were downloaded" >> $GITHUB_STEP_SUMMARY
+          fi

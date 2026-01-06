@@ -6,10 +6,6 @@ on:
   # Run on a schedule (monthly on the 1st at 00:00 UTC)
   schedule:
     - cron: '0 0 1 * *'
-  # Run on push to main branch (optional, can be removed if not desired)
-  push:
-    branches:
-      - main
 
 jobs:
   download-flags:
@@ -42,7 +38,7 @@ jobs:
           name: flag-images
           path: flags/
           retention-days: 90
-          if-no-files-found: error
+          if-no-files-found: warn
       
       - name: Display summary
         run: |

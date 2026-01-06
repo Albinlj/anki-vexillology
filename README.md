@@ -2,16 +2,25 @@
 
 An Anki flashcard deck for learning national flags (vexillology).
 
-## Downloading Flags
+## Download Pre-built Deck
 
-This repository includes a script to download all national flags from Wikipedia.
+The easiest way to get started is to download a pre-built deck from the [Releases page](../../releases). The deck is automatically generated monthly with the latest flag information from Wikipedia.
+
+1. Go to the [Releases page](../../releases)
+2. Download the latest `National_Flags.apkg` file
+3. Import it into Anki (File > Import)
+4. Start learning!
+
+## Building the Deck Yourself
+
+If you want to build the deck yourself or customize it, follow the instructions below.
 
 ### Prerequisites
 
 - Python 3.6 or higher
 - pip (Python package manager)
 
-### Installation
+## Installation
 
 1. Install the required dependencies:
 
@@ -19,9 +28,11 @@ This repository includes a script to download all national flags from Wikipedia.
 pip install -r requirements.txt
 ```
 
-### Usage
+## Usage
 
-Run the download script:
+### Step 1: Download Flag Images
+
+Run the download script to fetch all national flag images from Wikipedia:
 
 ```bash
 python download_flags.py
@@ -33,12 +44,64 @@ The script will:
 3. Download all flag images to the `flags/` directory
 4. Display a summary of successful and failed downloads
 
-### Output
-
 All downloaded flag images will be saved in the `flags/` directory. Each image is prefixed with a number to maintain order and avoid filename conflicts.
 
-### Notes
+### Step 2: Create the Anki Deck
 
-- The script includes a delay between requests to be respectful to Wikipedia's servers
+After downloading the flags, create the Anki flashcard deck:
+
+```bash
+python create_anki_deck.py
+```
+
+The script will:
+1. Fetch country information from Wikipedia
+2. Match countries with downloaded flag images
+3. Scrape detailed flag information (descriptions, symbolism, adoption dates)
+4. Generate an Anki deck file (`National_Flags.apkg`)
+
+The generated deck contains flashcards with:
+- **Front**: Flag image
+- **Back**: Country name, flag image, description (including symbolism and meaning), and adoption date
+
+### Step 3: Import into Anki
+
+1. Open Anki
+2. Go to File > Import
+3. Select the `National_Flags.apkg` file
+4. Start learning!
+
+## Testing
+
+Run the test suite to verify functionality:
+
+```bash
+python test_download.py    # Test flag download functionality
+python test_anki_deck.py   # Test Anki deck creation functionality
+```
+
+## Notes
+
+- The scripts include delays between requests to be respectful to Wikipedia's servers
 - Already downloaded images will be skipped on subsequent runs
 - The `flags/` directory is excluded from version control (see `.gitignore`)
+- Flag descriptions and details are automatically scraped from Wikipedia flag pages
+- Some countries may not have detailed information available on Wikipedia
+
+## Automated Releases
+
+This repository includes a GitHub Action that automatically:
+1. Downloads all flag images from Wikipedia
+2. Creates the Anki deck with the latest information
+3. Publishes a new release with the `National_Flags.apkg` file
+
+The workflow runs:
+- **Monthly** on the 1st of each month at 00:00 UTC (to keep the deck updated with latest Wikipedia information)
+- **Manually** via the "Actions" tab → "Create Anki Deck Release" → "Run workflow"
+- **Automatically** when a new version tag is pushed (e.g., `v1.0.0`)
+
+To trigger a manual release, you can also push a tag:
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```

@@ -94,7 +94,7 @@ def resize_image(image_data, max_size=MAX_IMAGE_SIZE):
     try:
         img = Image.open(BytesIO(image_data))
         
-        # Convert RGBA to RGB if necessary (PNG format supports RGB)
+        # Convert RGBA to RGB for storage optimization (reduces file size)
         if img.mode == 'RGBA':
             # Create a white background and paste with alpha mask
             background = Image.new('RGB', img.size, (255, 255, 255))

@@ -20,7 +20,7 @@ If you want to build the deck yourself or customize it, follow the instructions 
 - Python 3.6 or higher
 - pip (Python package manager)
 
-## Installation
+### Installation
 
 1. Install the required dependencies:
 
@@ -28,9 +28,34 @@ If you want to build the deck yourself or customize it, follow the instructions 
 pip install -r requirements.txt
 ```
 
-## Usage
+### Usage
 
-### Step 1: Download Flag Images
+#### Using GitHub Actions (Automated)
+
+This repository includes GitHub Actions that automate the entire process:
+
+**Download Flag Images Workflow:**
+- Runs monthly on the 1st of each month
+- Can be triggered manually from the Actions tab
+- Downloads flag images from Wikipedia
+- Resizes images to a maximum of 600px width/height while maintaining aspect ratio
+- Commits the downloaded and resized images directly to the repository
+- Also saves images as workflow artifacts (available for 90 days)
+
+To manually trigger the flag download workflow:
+1. Go to the "Actions" tab in the GitHub repository
+2. Select "Download Flag Images" workflow
+3. Click "Run workflow"
+
+**Create Anki Deck Release Workflow:**
+- Runs monthly on the 2nd of each month (after flags are updated)
+- Can be triggered manually from the Actions tab
+- Creates Anki deck from committed flag images
+- Publishes a GitHub release with the `National_Flags.apkg` file
+
+#### Using the Scripts Directly
+
+##### Step 1: Download Flag Images
 
 Run the download script to fetch all national flag images from Wikipedia:
 
@@ -42,11 +67,15 @@ The script will:
 1. Fetch the list of national flags from Wikipedia
 2. Extract flag image URLs
 3. Download all flag images to the `flags/` directory
-4. Display a summary of successful and failed downloads
+4. Resize images to a maximum of 600px width/height while maintaining aspect ratio
+5. Display a summary of successful and failed downloads
 
-All downloaded flag images will be saved in the `flags/` directory. Each image is prefixed with a number to maintain order and avoid filename conflicts.
+All downloaded flag images will be saved in the `flags/` directory. Each image is:
+- Prefixed with a number to maintain order and avoid filename conflicts
+- Resized to fit within 600px width/height while maintaining aspect ratio
+- Saved in PNG format for quality and compatibility
 
-### Step 2: Create the Anki Deck
+##### Step 2: Create the Anki Deck
 
 After downloading the flags, create the Anki flashcard deck:
 
@@ -64,7 +93,7 @@ The generated deck contains flashcards with:
 - **Front**: Flag image
 - **Back**: Country name, flag image, description (including symbolism and meaning), and adoption date
 
-### Step 3: Import into Anki
+##### Step 3: Import into Anki
 
 1. Open Anki
 2. Go to File > Import
@@ -78,12 +107,14 @@ Run the test suite to verify functionality:
 ```bash
 python test_download.py    # Test flag download functionality
 python test_anki_deck.py   # Test Anki deck creation functionality
+python test_integration.py # Test end-to-end Anki deck generation
 ```
 
 ## Notes
 
 - The scripts include delays between requests to be respectful to Wikipedia's servers
 - Already downloaded images will be skipped on subsequent runs
+- Images are automatically resized to optimize storage while maintaining quality
 - Flag descriptions and details are automatically scraped from Wikipedia flag pages
 - Some countries may not have detailed information available on Wikipedia
 

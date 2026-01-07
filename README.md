@@ -84,21 +84,28 @@ python test_anki_deck.py   # Test Anki deck creation functionality
 
 - The scripts include delays between requests to be respectful to Wikipedia's servers
 - Already downloaded images will be skipped on subsequent runs
-- The `flags/` directory is excluded from version control (see `.gitignore`)
 - Flag descriptions and details are automatically scraped from Wikipedia flag pages
 - Some countries may not have detailed information available on Wikipedia
 
-## Automated Releases
+## Automated Workflows
 
-This repository includes a GitHub Action that automatically:
-1. Downloads all flag images from Wikipedia
-2. Creates the Anki deck with the latest information
-3. Publishes a new release with the `National_Flags.apkg` file
+This repository includes two GitHub Actions that work together:
 
-The workflow runs:
-- **Monthly** on the 1st of each month at 00:00 UTC (to keep the deck updated with latest Wikipedia information)
-- **Manually** via the "Actions" tab → "Create Anki Deck Release" → "Run workflow"
-- **Automatically** when a new version tag is pushed (e.g., `v1.0.0`)
+### 1. Download Flag Images (runs on the 1st of each month)
+- Downloads all flag images from Wikipedia
+- Resizes images to optimize storage
+- Commits updated flags to the repository
+
+### 2. Create Anki Deck Release (runs on the 2nd of each month)
+- Uses the committed flag images from the repository
+- Creates the Anki deck with the latest Wikipedia information
+- Publishes a new release with the `National_Flags.apkg` file
+
+The workflows run:
+- **Download Flags**: Monthly on the 1st at 00:00 UTC
+- **Create Release**: Monthly on the 2nd at 00:00 UTC (uses flags from 1st)
+- **Manual Triggers**: Both can be triggered manually via the "Actions" tab
+- **Version Tags**: Create Release also triggers on version tag pushes (e.g., `v1.0.0`)
 
 To trigger a manual release, you can also push a tag:
 ```bash

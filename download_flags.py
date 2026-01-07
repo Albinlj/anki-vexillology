@@ -10,11 +10,14 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 import time
+from PIL import Image
+from io import BytesIO
 
 # Configuration
 WIKIPEDIA_URL = "https://en.wikipedia.org/wiki/List_of_national_flags_of_sovereign_states"
 OUTPUT_DIR = "flags"
 REQUEST_DELAY = 0.5  # Delay between requests to be respectful to Wikipedia's servers
+MAX_IMAGE_SIZE = 600  # Maximum width or height in pixels
 
 
 def create_output_directory():
@@ -86,6 +89,47 @@ def sanitize_filename(filename):
     return filename
 
 
+def resize_image(image_data, max_size=MAX_IMAGE_SIZE):
+    """Resize an image to fit within max_size while maintaining aspect ratio."""
+    try:
+        img = Image.open(BytesIO(image_data))
+        
+        # Convert RGBA to RGB for storage optimization (reduces file size)
+        if img.mode == 'RGBA':
+            # Create a white background and paste with alpha mask
+            background = Image.new('RGB', img.size, (255, 255, 255))
+            background.paste(img, mask=img.split()[3])
+            img = background
+        elif img.mode not in ('RGB', 'L'):
+            img = img.convert('RGB')
+        
+        # Check if resizing is needed
+        width, height = img.size
+        if width <= max_size and height <= max_size:
+            # No resizing needed, return original data
+            return image_data
+        
+        # Calculate new dimensions maintaining aspect ratio
+        if width > height:
+            new_width = max_size
+            new_height = int((max_size / width) * height)
+        else:
+            new_height = max_size
+            new_width = int((max_size / height) * width)
+        
+        # Resize image using high-quality LANCZOS resampling
+        img = img.resize((new_width, new_height), Image.LANCZOS)
+        
+        # Save to bytes
+        output = BytesIO()
+        img.save(output, format='PNG', optimize=True)
+        return output.getvalue()
+    except Exception as e:
+        print(f"    Warning: Could not resize image: {e}")
+        # Return original data if resize fails
+        return image_data
+
+
 def download_image(img_data, index):
     """Download a single flag image."""
     url = img_data['url']
@@ -125,8 +169,12 @@ def download_image(img_data, index):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         
+        # Resize the image
+        print(f"    Resizing to max {MAX_IMAGE_SIZE}px...")
+        resized_data = resize_image(response.content)
+        
         with open(filepath, 'wb') as f:
-            f.write(response.content)
+            f.write(resized_data)
         
         return True
     except Exception as e:

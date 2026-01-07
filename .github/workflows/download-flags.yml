@@ -1,0 +1,75 @@
+name: Download Flag Images
+
+on:
+  # Allow manual trigger
+  workflow_dispatch:
+  # Run on a schedule (monthly on the 1st at 00:00 UTC)
+  schedule:
+    - cron: '0 0 1 * *'
+
+jobs:
+  download-flags:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Download flag images
+        run: |
+          python download_flags.py
+      
+      - name: Commit and push flag images
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          # Check if flags directory has changes (new, modified, or deleted files)
+          if [ -d "flags" ] && [ -n "$(git status --porcelain flags/)" ]; then
+            git add flags/
+            git commit -m "Update flag images (resized to max 600px)"
+            git push
+          elif [ ! -d "flags" ]; then
+            echo "No flags directory found"
+          else
+            echo "No changes to commit"
+          fi
+      
+      - name: Upload flag images as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: flag-images
+          path: flags/
+          retention-days: 90
+          if-no-files-found: warn
+      
+      - name: Display summary
+        run: |
+          echo "## Download Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -d "flags" ] && [ "$(ls -A flags/)" ]; then
+            FILE_COUNT=$(find flags/ -type f | wc -l)
+            echo "Total flag images downloaded: $FILE_COUNT" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Sample of Downloaded Files:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            ls -1 flags/ | head -20 >> $GITHUB_STEP_SUMMARY
+            if [ "$FILE_COUNT" -gt 20 ]; then
+              echo "... and $((FILE_COUNT - 20)) more files" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ No flag images were downloaded" >> $GITHUB_STEP_SUMMARY
+          fi
